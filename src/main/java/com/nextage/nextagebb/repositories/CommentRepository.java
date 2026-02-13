@@ -14,15 +14,15 @@ import java.util.List;
 @Repository
 public interface CommentRepository extends JpaRepository<Comment, Long> {
 
-    // Busca todos os comentários de um post específico
+    // busca todos os comentários de um post específico
     List<Comment> findByPost(Post post);
 
-    // Busca comentários de um post específico ordenando do mais antigo para o mais novo (fluxo de chat)
+    // busca comentários de um post específico ordenando do mais antigo pro mais novo (fluxo de chat)
     List<Comment> findByPostOrderByCreatedAtAsc(Post post);
 
-    // Busca todos os comentários feitos por um personagem específico
+    // busca todos os comentários feitos por um personagem específico
     List<Comment> findByAuthor(com.nextage.nextagebb.model.Character author);
 
-    // Conta quantos comentários um post tem (útil para exibir o contador na timeline)
+    // conta quantos comentários um post tem (bom pra exibir o contador na tela)
     long countByPost(Post post);
 }

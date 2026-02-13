@@ -16,20 +16,20 @@ import java.util.List;
 @Repository
 public interface PostRepository extends JpaRepository<Post, Long> {
 
-    // Busca todos os posts de um autor específico (útil para a tela de Perfil)
+    // busca todos os posts de um autor específico (útil para a tela de Perfil)
     List<Post> findByAuthorOrderByCreatedAtDesc(Character author);
 
-    // Busca posts que contenham uma palavra-chave específica
+    // busca posts que contenham uma palavra-chave específica
     List<Post> findByTextContainingIgnoreCase(String keyword);
 
     /**
-     * Esta é a consulta para a TIMELINE:
+     * Esta é a consulta pra TELA:
      * Busca posts de todos os personagens que o personagem logado segue.
      */
     @Query("SELECT p FROM Post p WHERE p.author IN (SELECT f FROM Character c JOIN c.following f WHERE c.id = :characterId) ORDER BY p.createdAt DESC")
     List<Post> findTimelineByCharacterId(@Param("characterId") Long characterId);
 
-    // Conta quantos likes um post recebeu
+    // conta quantos likes um post recebeu
     @Query("SELECT size(p.likedBy) FROM Post p WHERE p.id = :postId")
     Integer countLikesByPostId(@Param("postId") Long postId);
 }

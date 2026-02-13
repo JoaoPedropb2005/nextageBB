@@ -14,12 +14,12 @@ import java.util.List;
 @Repository
 public interface GameRepository extends JpaRepository<Game, Long> {
 
-    // Busca jogos pelo nome
+    // busca jogos pelo nome
     List<Game> findByName(String name);
 
-    // Busca jogos que contenham parte do nome (útil para campos de busca/autocomplete)
+    // busca jogos que contenham parte do nome (pra campos de busca/autocomplete)
     List<Game> findByNameContainingIgnoreCase(String name);
 
-    // Busca jogos por gênero (ex: RPG, FPS, MMO)
+    // busca jogos por gênero (ex: RPG e FPS)
     List<Game> findByGenreIgnoreCase(String genre);
 }
