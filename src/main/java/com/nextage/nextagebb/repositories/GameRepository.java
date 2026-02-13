@@ -5,6 +5,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 import java.util.List;
 
+
 /**
  * Repositório para a entidade Game.
  * Permite gerenciar os jogos disponíveis para os personagens se associarem.
