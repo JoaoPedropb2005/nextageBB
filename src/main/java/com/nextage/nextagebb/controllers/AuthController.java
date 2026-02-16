@@ -9,6 +9,7 @@ import com.nextage.nextagebb.dtos.LoginResponseDTO;
 import com.nextage.nextagebb.dtos.RegisterDTO;
 import com.nextage.nextagebb.model.User;
 import com.nextage.nextagebb.repositories.UserRepository;
+import com.nextage.nextagebb.service.TokenService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -34,6 +35,9 @@ public class AuthController {
     @Autowired
     private UserRepository userRepository;
     
+    @Autowired
+    private TokenService tokenService;
+    
     @PostMapping("/login")
     public ResponseEntity login(@RequestBody LoginDTO data){
     
@@ -43,7 +47,9 @@ public class AuthController {
         
         var user = (User) auth.getPrincipal();
         
-        return ResponseEntity.ok(new LoginResponseDTO("token-fake-temporario", user.getId(), user.getName()));
+        var token = tokenService.generateToken(user);
+        
+        return ResponseEntity.ok(new LoginResponseDTO(token, user.getId(), user.getName()));
     }
     
     @PostMapping("/register")
