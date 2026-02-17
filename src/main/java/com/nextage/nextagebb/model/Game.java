@@ -23,6 +23,8 @@ public class Game {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     
+    private Long idApi;
+    
     @Column(nullable = false)
     private String name;
     
@@ -71,7 +73,13 @@ public class Game {
     public void setImageUrl(String imageUrl) {
         this.imageUrl = imageUrl;
     }
-    
-    
+
+    public Long getIdApi() {
+        return idApi;
+    }
+
+    public void setIdApi(Long idApi) {
+        this.idApi = idApi;
+    }
     
 }

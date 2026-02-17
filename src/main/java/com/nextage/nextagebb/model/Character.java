@@ -4,8 +4,13 @@
  */
 package com.nextage.nextagebb.model;
 
+import com.nextage.nextagebb.model.enums.CharacterClass;
+import com.nextage.nextagebb.model.enums.CharacterRole;
+import com.nextage.nextagebb.model.enums.Race;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
@@ -33,7 +38,17 @@ public class Character {
     @Column(nullable = false)
     private String name;
     
-    private String characterClass;
+    @Enumerated(EnumType.STRING)
+    @Column(name = "character_class", nullable = false)
+    private CharacterClass characterClass;
+    
+    @Enumerated(EnumType.STRING)
+    @Column(nullable = false)
+    private Race race;
+    
+    @Enumerated(EnumType.STRING)
+    @Column(nullable = false)
+    private CharacterRole role;
     
     private String photoUrl;
     
@@ -63,10 +78,12 @@ public class Character {
         
     }
     
-    public Character(Long id, String name, String characterClass, String photoUrl, User user, Game game){
+    public Character(Long id, String name, CharacterClass characterClass, Race race, CharacterRole role, String photoUrl, User user, Game game){
         this.id = id;
         this.name = name;
         this.characterClass = characterClass;
+        this.race = race;
+        this.role = role;
         this.photoUrl = photoUrl;
         this.user = user;
         this.game = game;
@@ -86,14 +103,6 @@ public class Character {
 
     public void setName(String name) {
         this.name = name;
-    }
-
-    public String getCharacterClass() {
-        return characterClass;
-    }
-
-    public void setCharacterClass(String characterClass) {
-        this.characterClass = characterClass;
     }
 
     public String getPhotoUrl() {
@@ -134,6 +143,30 @@ public class Character {
 
     public void setFollowers(Set<Character> followers) {
         this.followers = followers;
+    }
+
+    public CharacterClass getCharacterClass() {
+        return characterClass;
+    }
+
+    public void setCharacterClass(CharacterClass characterClass) {
+        this.characterClass = characterClass;
+    }
+
+    public Race getRace() {
+        return race;
+    }
+
+    public void setRace(Race race) {
+        this.race = race;
+    }
+
+    public CharacterRole getRole() {
+        return role;
+    }
+
+    public void setRole(CharacterRole role) {
+        this.role = role;
     }
 
     
