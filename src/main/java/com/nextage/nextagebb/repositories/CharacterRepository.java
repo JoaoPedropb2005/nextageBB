@@ -3,6 +3,7 @@ package com.nextage.nextagebb.repositories;
 import com.nextage.nextagebb.model.Character;
 import com.nextage.nextagebb.model.Game;
 import com.nextage.nextagebb.model.User;
+import com.nextage.nextagebb.model.enums.CharacterClass;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 import java.util.List;
@@ -29,5 +30,5 @@ public interface CharacterRepository extends JpaRepository<Character, Long> {
     List<Character> findByNameContainingIgnoreCase(String name);
     
     // busca personagens por classe
-    List<Character> findByCharacterClass(String characterClass);
+    List<Character> findByCharacterClass(CharacterClass characterClass);
 }
