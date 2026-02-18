@@ -8,8 +8,10 @@ import com.nextage.nextagebb.dtos.PostDTO;
 import com.nextage.nextagebb.model.Post;
 import com.nextage.nextagebb.model.User;
 import com.nextage.nextagebb.model.Character;
+import com.nextage.nextagebb.model.Photo;
 import com.nextage.nextagebb.repositories.CharacterRepository;
 import com.nextage.nextagebb.repositories.PostRepository;
+import com.nextage.nextagebb.service.PhotoService;
 import java.time.LocalDateTime;
 import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,7 +23,9 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.multipart.MultipartFile;
 
 /**
  *
@@ -37,8 +41,11 @@ public class PostController {
     @Autowired
     private CharacterRepository characterRepository;
     
-    @PostMapping
-    public ResponseEntity create(@RequestBody PostDTO data){
+    @Autowired
+    private PhotoService photoService;
+    
+    @PostMapping(consumes = "multipart/form-data")
+    public ResponseEntity create(@RequestBody PostDTO data, @RequestParam(value = "file", required = false) MultipartFile file){
         
         User user = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         
@@ -50,7 +57,13 @@ public class PostController {
         
         Post newPost = new Post();
         newPost.setText(data.text());
-        newPost.setImageUrl(data.imageUrl());
+        
+        if(file != null && !file.isEmpty()){
+            Photo photo = photoService.storeFile(file);
+            String url = photoService.generateUrl(photo.getId());
+            newPost.setImageUrl(url);
+        }
+        
         newPost.setCreatedAt(LocalDateTime.now());
         newPost.setAuthor(character);
         
@@ -67,4 +80,3 @@ public class PostController {
             return postRepository.findByAuthorOrderByCreatedAtDesc(character);
     }
 }
-t

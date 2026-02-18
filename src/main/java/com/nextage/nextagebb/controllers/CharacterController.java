@@ -3,15 +3,18 @@ package com.nextage.nextagebb.controllers;
 import com.nextage.nextagebb.dtos.CharacterDTO;
 import com.nextage.nextagebb.model.Character;
 import com.nextage.nextagebb.model.Game;
+import com.nextage.nextagebb.model.Photo;
 import com.nextage.nextagebb.model.User;
 import com.nextage.nextagebb.repositories.CharacterRepository;
 import com.nextage.nextagebb.service.GameService;
+import com.nextage.nextagebb.service.PhotoService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.web.multipart.MultipartFile;
 
 @RestController
 @RequestMapping("/api/characters")
@@ -23,8 +26,11 @@ public class CharacterController {
     @Autowired
     private GameService gameService;
     
-    @PostMapping
-    public ResponseEntity create(@RequestBody CharacterDTO info) {
+    @Autowired
+    private PhotoService photoService;
+    
+    @PostMapping(consumes = "multipart/form-data")
+    public ResponseEntity create(@RequestBody CharacterDTO info, @RequestParam(value = "file", required = false) MultipartFile file) {
         
         User user = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         
@@ -35,7 +41,16 @@ public class CharacterController {
         newCharacter.setCharacterClass(info.characterClass());
         newCharacter.setRace(info.race());
         newCharacter.setRole(info.role());
-        newCharacter.setPhotoUrl(info.photoUrl());
+        
+        if(file != null && !file.isEmpty()){
+            Photo photo = photoService.storeFile(file);
+            
+            String url = photoService.generateUrl(photo.getId());
+            
+            newCharacter.setPhotoUrl(url);
+        } else {
+                newCharacter.setPhotoUrl(null);
+        }
         
         newCharacter.setGame(game);
         newCharacter.setUser(user);
