@@ -36,6 +36,9 @@ public class Post {
     @Column(name = "created_at")
     private LocalDateTime createdAt;
     
+    @Column
+    private String imageUrl;
+    
     @ManyToOne
     @JoinColumn(name = "character_id", nullable = false)
     private Character author;
@@ -52,9 +55,10 @@ public class Post {
         this.createdAt = LocalDateTime.now();
     }
 
-    public Post(Long id, String text, Character author) {
+    public Post(Long id, String text, String imageUrl, Character author) {
         this.id = id;
         this.text = text;
+        this.imageUrl = imageUrl;
         this.author = author;
         this.createdAt = LocalDateTime.now();
     }
@@ -99,6 +103,12 @@ public class Post {
         this.likedBy = likedBy;
     }
     
-    
+     public String getImageUrl() {
+        return imageUrl;
+    }
+
+    public void setImageUrl(String imageUrl) {
+        this.imageUrl = imageUrl;
+    }
     
 }

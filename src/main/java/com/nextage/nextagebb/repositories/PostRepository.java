@@ -21,7 +21,7 @@ public interface PostRepository extends JpaRepository<Post, Long> {
 
     // busca posts que contenham uma palavra-chave específica
     List<Post> findByTextContainingIgnoreCase(String keyword);
-
+    
     /**
      * Esta é a consulta pra TELA:
      * Busca posts de todos os personagens que o personagem logado segue.
