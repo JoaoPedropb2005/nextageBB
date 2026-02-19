@@ -5,6 +5,7 @@
 package com.nextage.nextagebb.controllers;
 
 import com.nextage.nextagebb.dtos.PostDTO;
+import com.nextage.nextagebb.dtos.PostResponseDTO;
 import com.nextage.nextagebb.model.Post;
 import com.nextage.nextagebb.model.User;
 import com.nextage.nextagebb.model.Character;
@@ -19,6 +20,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -45,7 +47,7 @@ public class PostController {
     private PhotoService photoService;
     
     @PostMapping(consumes = "multipart/form-data")
-    public ResponseEntity create(@RequestBody PostDTO data, @RequestParam(value = "file", required = false) MultipartFile file){
+    public ResponseEntity create(@ModelAttribute PostDTO data){
         
         User user = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         
@@ -58,8 +60,8 @@ public class PostController {
         Post newPost = new Post();
         newPost.setText(data.text());
         
-        if(file != null && !file.isEmpty()){
-            Photo photo = photoService.storeFile(file);
+        if(data.file() != null && !data.file().isEmpty()){
+            Photo photo = photoService.storeFile(data.file());
             String url = photoService.generateUrl(photo.getId());
             newPost.setImageUrl(url);
         }
@@ -74,9 +76,37 @@ public class PostController {
     }
     
     @GetMapping("/post-character/{characterId}")
-    public List<Post> getPostsByCharacter(@PathVariable Long characterId){
-            Character character = new Character();
-            character.setId(characterId);
-            return postRepository.findByAuthorOrderByCreatedAtDesc(character);
+    public ResponseEntity<List<PostResponseDTO>> getPostsByCharacter(@PathVariable Long characterId){
+        Character character = new Character();
+        character.setId(characterId);
+        
+        List<Post> posts = postRepository.findByAuthorOrderByCreatedAtDesc(character);
+        
+        List<PostResponseDTO> response = posts.stream()
+                .map(PostResponseDTO::new)
+                .toList();
+                
+        return ResponseEntity.ok(response);
+    }
+    
+    @GetMapping("/timeline/{myCharacterId}")
+    public ResponseEntity<List<PostResponseDTO>> getTimeline(@PathVariable Long myCharacterId) {
+        
+        User user = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        Character myChar = characterRepository.findById(myCharacterId)
+                .orElseThrow(() -> new RuntimeException("Personagem não encontrado"));
+
+        if (!myChar.getUser().getId().equals(user.getId())) {
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
+        }
+        
+        List<Post> posts = postRepository.findTimeline(myCharacterId);
+        
+        // Conversão de Entidade para DTO
+        List<PostResponseDTO> response = posts.stream()
+                .map(PostResponseDTO::new) // Usa o construtor de PostResponseDTO
+                .toList();
+
+        return ResponseEntity.ok(response);
     }
 }

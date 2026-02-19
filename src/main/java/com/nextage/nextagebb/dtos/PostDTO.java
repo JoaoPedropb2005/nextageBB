@@ -4,10 +4,12 @@
  */
 package com.nextage.nextagebb.dtos;
 
+import org.springframework.web.multipart.MultipartFile;
+
 /**
  *
  * @author jppb2
  */
-public record PostDTO(String text, String imageUrl, Long characterId) {
+public record PostDTO(String text, Long characterId, MultipartFile file) {
     
 }

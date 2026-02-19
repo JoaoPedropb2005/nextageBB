@@ -32,4 +32,10 @@ public interface PostRepository extends JpaRepository<Post, Long> {
     // conta quantos likes um post recebeu
     @Query("SELECT size(p.likedBy) FROM Post p WHERE p.id = :postId")
     Integer countLikesByPostId(@Param("postId") Long postId);
+    
+    // --- A QUERY DA TIMELINE ---
+    @Query("SELECT p FROM Post p WHERE p.author IN " +
+           "(SELECT f FROM Character c JOIN c.following f WHERE c.id = :myCharacterId) " +
+           "ORDER BY p.createdAt DESC")
+    List<Post> findTimeline(@Param("myCharacterId") Long myCharacterId);
 }

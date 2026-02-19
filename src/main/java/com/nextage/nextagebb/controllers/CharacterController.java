@@ -1,6 +1,7 @@
 package com.nextage.nextagebb.controllers;
 
 import com.nextage.nextagebb.dtos.CharacterDTO;
+import com.nextage.nextagebb.dtos.CharacterResponseDTO;
 import com.nextage.nextagebb.model.Character;
 import com.nextage.nextagebb.model.Game;
 import com.nextage.nextagebb.model.Photo;
@@ -62,11 +63,16 @@ public class CharacterController {
     }
     
     @GetMapping("/my-characters")
-    public List<Character> listMyCharacters(){
-        
+    public ResponseEntity<List<CharacterResponseDTO>> listMyCharacters() {
         User user = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         
-        return characterRepository.findByUser(user);
+        List<Character> characters = characterRepository.findByUser(user);
+        
+        List<CharacterResponseDTO> response = characters.stream()
+                .map(CharacterResponseDTO::new)
+                .toList();
+                
+        return ResponseEntity.ok(response);
     }
 
     @GetMapping("/user/{userId}")
