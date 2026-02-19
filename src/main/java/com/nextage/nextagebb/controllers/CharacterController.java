@@ -84,8 +84,9 @@ public class CharacterController {
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<Character> getById(@PathVariable Long id) {
+    public ResponseEntity<CharacterResponseDTO> getById(@PathVariable Long id) {
         return characterRepository.findById(id)
+                .map(CharacterResponseDTO::new)
                 .map(ResponseEntity::ok)
                 .orElse(ResponseEntity.notFound().build());
     }
@@ -135,6 +136,30 @@ public class CharacterController {
         characterRepository.save(myChar);
 
         return ResponseEntity.ok("Deixou de seguir " + target.getName());
+    }
+    
+    @GetMapping("/search")
+    public ResponseEntity<List<CharacterResponseDTO>> searchSameGameCharacters(
+            @RequestParam Long myCharacterId, 
+            @RequestParam String name) {
+        
+        Character myChar = characterRepository.findById(myCharacterId)
+                .orElseThrow(() -> new RuntimeException("Personagem não encontrado"));
+                
+        if (myChar.getGame() == null) {
+            return ResponseEntity.badRequest().build(); 
+        }
+        
+        Long gameId = myChar.getGame().getId();
+        
+        List<Character> found = characterRepository.searchByGameAndName(gameId, name, myCharacterId);
+        
+        // Converte para DTO
+        List<CharacterResponseDTO> response = found.stream()
+                .map(CharacterResponseDTO::new)
+                .toList();
+                
+        return ResponseEntity.ok(response);
     }
     
 }

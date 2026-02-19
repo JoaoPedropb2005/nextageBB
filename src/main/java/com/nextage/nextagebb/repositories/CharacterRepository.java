@@ -7,6 +7,8 @@ import com.nextage.nextagebb.model.enums.CharacterClass;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 import java.util.List;
+import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 
 /**
  * Repositório para a entidade Character.
@@ -31,4 +33,11 @@ public interface CharacterRepository extends JpaRepository<Character, Long> {
     
     // busca personagens por classe
     List<Character> findByCharacterClass(CharacterClass characterClass);
+    
+    @Query("SELECT c FROM Character c WHERE c.game.id = :gameId AND LOWER(c.name) LIKE LOWER(CONCAT('%', :name, '%')) AND c.id != :myCharId")
+    List<Character> searchByGameAndName(
+            @Param("gameId") Long gameId, 
+            @Param("name") String name, 
+            @Param("myCharId") Long myCharId
+    );
 }
