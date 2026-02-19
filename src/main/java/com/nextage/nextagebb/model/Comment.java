@@ -44,15 +44,6 @@ public class Comment {
         
     }
     
-    public Comment(Long id, String text, Post post, Character author){
-        this.id = id;
-        this.text = text;
-        this.post = post;
-        this.author = author;
-        this.createdAt = LocalDateTime.now();
-        
-    }
-
     public Long getId() {
         return id;
     }

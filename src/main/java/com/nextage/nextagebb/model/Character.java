@@ -136,6 +136,16 @@ public class Character {
     public void setFollowing(Set<Character> following) {
         this.following = following;
     }
+    
+    // Adiciona um personagem na lista de seguidos
+    public void startFollowing(Character target) {
+        this.following.add(target);
+    }
+
+    // Remove um personagem da lista
+    public void stopFollowing(Character target) {
+        this.following.remove(target);
+    }
 
     public Set<Character> getFollowers() {
         return followers;

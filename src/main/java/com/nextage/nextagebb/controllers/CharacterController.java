@@ -1,17 +1,22 @@
 package com.nextage.nextagebb.controllers;
 
 import com.nextage.nextagebb.dtos.CharacterDTO;
+import com.nextage.nextagebb.dtos.CharacterResponseDTO;
 import com.nextage.nextagebb.model.Character;
 import com.nextage.nextagebb.model.Game;
+import com.nextage.nextagebb.model.Photo;
 import com.nextage.nextagebb.model.User;
 import com.nextage.nextagebb.repositories.CharacterRepository;
 import com.nextage.nextagebb.service.GameService;
+import com.nextage.nextagebb.service.PhotoService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import org.springframework.http.HttpStatus;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.web.multipart.MultipartFile;
 
 @RestController
 @RequestMapping("/api/characters")
@@ -23,8 +28,11 @@ public class CharacterController {
     @Autowired
     private GameService gameService;
     
-    @PostMapping
-    public ResponseEntity create(@RequestBody CharacterDTO info) {
+    @Autowired
+    private PhotoService photoService;
+    
+    @PostMapping(consumes = "multipart/form-data")
+    public ResponseEntity create(@ModelAttribute CharacterDTO info) {
         
         User user = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         
@@ -35,7 +43,16 @@ public class CharacterController {
         newCharacter.setCharacterClass(info.characterClass());
         newCharacter.setRace(info.race());
         newCharacter.setRole(info.role());
-        newCharacter.setPhotoUrl(info.photoUrl());
+        
+        if(info.file() != null && !info.file().isEmpty()){
+            Photo photo = photoService.storeFile(info.file());
+            
+            String url = photoService.generateUrl(photo.getId());
+            
+            newCharacter.setPhotoUrl(url);
+        } else {
+                newCharacter.setPhotoUrl(null);
+        }
         
         newCharacter.setGame(game);
         newCharacter.setUser(user);
@@ -46,11 +63,16 @@ public class CharacterController {
     }
     
     @GetMapping("/my-characters")
-    public List<Character> listMyCharacters(){
-        
+    public ResponseEntity<List<CharacterResponseDTO>> listMyCharacters() {
         User user = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         
-        return characterRepository.findByUser(user);
+        List<Character> characters = characterRepository.findByUser(user);
+        
+        List<CharacterResponseDTO> response = characters.stream()
+                .map(CharacterResponseDTO::new)
+                .toList();
+                
+        return ResponseEntity.ok(response);
     }
 
     @GetMapping("/user/{userId}")
@@ -67,4 +89,52 @@ public class CharacterController {
                 .map(ResponseEntity::ok)
                 .orElse(ResponseEntity.notFound().build());
     }
+    
+    @PostMapping("/{myCharacterId}/follow/{targetId}")
+    public ResponseEntity followCharacter(@PathVariable Long myCharacterId, @PathVariable Long targetId){
+        
+        User user = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        
+        Character myChar = characterRepository.findById(myCharacterId)
+                .orElseThrow(() -> new RuntimeException("Seu personagem não encontrado"));
+        
+        if (!myChar.getUser().getId().equals(user.getId())) {
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
+        }
+        
+        Character target = characterRepository.findById(targetId)
+                .orElseThrow(() -> new RuntimeException("Personagem alvo não encontrado"));
+        
+        if (myCharacterId.equals(targetId)) {
+            return ResponseEntity.badRequest().body("Você não pode seguir a si mesmo");
+        }
+        
+        myChar.startFollowing(target);
+        characterRepository.save(myChar);
+        
+        return ResponseEntity.ok("Agora você está seguindo " + target.getName() + "!");
+        
+    }
+    
+    @DeleteMapping("/{myCharacterId}/follow/{targetId}")
+    public ResponseEntity unfollowCharacter(@PathVariable Long myCharacterId, @PathVariable Long targetId) {
+        
+        User user = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+
+        Character myChar = characterRepository.findById(myCharacterId)
+                .orElseThrow(() -> new RuntimeException("Seu personagem não encontrado"));
+
+        if (!myChar.getUser().getId().equals(user.getId())) {
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
+        }
+
+        Character target = characterRepository.findById(targetId)
+                .orElseThrow(() -> new RuntimeException("Alvo não encontrado"));
+
+        myChar.stopFollowing(target);
+        characterRepository.save(myChar);
+
+        return ResponseEntity.ok("Deixou de seguir " + target.getName());
+    }
+    
 }

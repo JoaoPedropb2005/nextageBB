@@ -36,6 +36,9 @@ public class Post {
     @Column(name = "created_at")
     private LocalDateTime createdAt;
     
+    @Column
+    private String imageUrl;
+    
     @ManyToOne
     @JoinColumn(name = "character_id", nullable = false)
     private Character author;
@@ -52,9 +55,10 @@ public class Post {
         this.createdAt = LocalDateTime.now();
     }
 
-    public Post(Long id, String text, Character author) {
+    public Post(Long id, String text, String imageUrl, Character author) {
         this.id = id;
         this.text = text;
+        this.imageUrl = imageUrl;
         this.author = author;
         this.createdAt = LocalDateTime.now();
     }
@@ -94,11 +98,30 @@ public class Post {
     public Set<Character> getLikedBy() {
         return likedBy;
     }
+    
+    public void addLike(Character character) {
+        this.likedBy.add(character);
+    }
+
+    public void removeLike(Character character) {
+        this.likedBy.remove(character);
+    }
+    
+    // Verifica se já curtiu
+    public boolean isLikedBy(Character character) {
+        return this.likedBy.contains(character);
+    }
 
     public void setLikedBy(Set<Character> likedBy) {
         this.likedBy = likedBy;
     }
     
-    
+     public String getImageUrl() {
+        return imageUrl;
+    }
+
+    public void setImageUrl(String imageUrl) {
+        this.imageUrl = imageUrl;
+    }
     
 }
