@@ -7,6 +7,7 @@ package com.nextage.nextagebb.dtos;
 import com.nextage.nextagebb.model.enums.CharacterClass;
 import com.nextage.nextagebb.model.enums.CharacterRole;
 import com.nextage.nextagebb.model.enums.Race;
+import org.springframework.web.multipart.MultipartFile;
 
 /**
  *
@@ -17,10 +18,11 @@ public record CharacterDTO(
         CharacterClass characterClass,
         Race race,
         CharacterRole role,
-        String photoUrl,
         Long gameIdApi,
         String gameName,
-        String gameImage
+        String gameImage,
+        
+        MultipartFile file
         ) {
 
 }
