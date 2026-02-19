@@ -100,7 +100,7 @@ public class PostController {
         return ResponseEntity.ok(response);
     }
     
-    @GetMapping("/timeline/{myCharacterId}")
+    @GetMapping("/timeline/{characterId}")
     public ResponseEntity<List<PostResponseDTO>> getTimeline(@PathVariable Long characterId) {
         
         User user = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
