@@ -76,37 +76,75 @@ public class PostController {
     }
     
     @GetMapping("/post-character/{characterId}")
-    public ResponseEntity<List<PostResponseDTO>> getPostsByCharacter(@PathVariable Long characterId){
+    public ResponseEntity<List<PostResponseDTO>> getPostsByCharacter(@PathVariable Long characterId, @RequestParam(required = false) Long viewerId){
+        
         Character character = new Character();
         character.setId(characterId);
         
+        Character viewer = null;
+        if (viewerId != null) {
+            
+            viewer = characterRepository.findById(viewerId).orElse(null);
+        
+        }
+
+        final Character finalViewer = viewer;
+        
         List<Post> posts = postRepository.findByAuthorOrderByCreatedAtDesc(character);
         
+        // Monta a resposta passando o visitante para checar os like
         List<PostResponseDTO> response = posts.stream()
-                .map(PostResponseDTO::new)
+                .map(post -> new PostResponseDTO(post, finalViewer))
                 .toList();
                 
         return ResponseEntity.ok(response);
     }
     
     @GetMapping("/timeline/{myCharacterId}")
-    public ResponseEntity<List<PostResponseDTO>> getTimeline(@PathVariable Long myCharacterId) {
+    public ResponseEntity<List<PostResponseDTO>> getTimeline(@PathVariable Long characterId) {
         
         User user = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-        Character myChar = characterRepository.findById(myCharacterId)
+        Character myChar = characterRepository.findById(characterId)
                 .orElseThrow(() -> new RuntimeException("Personagem não encontrado"));
 
         if (!myChar.getUser().getId().equals(user.getId())) {
             return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
         }
         
-        List<Post> posts = postRepository.findTimeline(myCharacterId);
+        List<Post> posts = postRepository.findTimeline(characterId);
         
         // Conversão de Entidade para DTO
+        // Passamos 'myChar' para o DTO saber se esse personagem curtiu os posts
         List<PostResponseDTO> response = posts.stream()
-                .map(PostResponseDTO::new) // Usa o construtor de PostResponseDTO
+                .map(post -> new PostResponseDTO(post, myChar)) 
                 .toList();
 
         return ResponseEntity.ok(response);
     }
+    
+    @PostMapping("/{postId}/like")
+    public ResponseEntity<String> toggleLike(@PathVariable Long postId, @RequestParam Long characterId){
+        
+        User user = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        
+        Character character = characterRepository.findById(characterId).orElseThrow(() -> new RuntimeException("Personagem não encontrado"));
+        
+        if (!character.getUser().getId().equals(user.getId())) {
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).body("Você não pode curtir com um personagem que não é seu!");
+        }
+        
+        Post post = postRepository.findById(postId).orElseThrow(() -> new RuntimeException("Post não encontrado"));
+        
+        if(post.isLikedBy(character)){
+            post.removeLike(character);
+            postRepository.save(post);
+            return ResponseEntity.ok("Like removido");
+        } else {
+            post.addLike(character);
+            postRepository.save(post);
+            return ResponseEntity.ok("Like adicionado");
+        }
+        
+    }
+    
 }

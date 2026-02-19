@@ -5,6 +5,7 @@
 package com.nextage.nextagebb.dtos;
 
 import com.nextage.nextagebb.model.Post;
+import com.nextage.nextagebb.model.Character;
 import java.time.LocalDateTime;
 
 /**
@@ -19,9 +20,10 @@ public record PostResponseDTO(
         Long authorId,
         String authorName,
         String authorPhotoUrl,
-        Integer likesCount) {
+        Integer likesCount,
+        Boolean likedByMe) {
     
-    public PostResponseDTO(Post post) {
+    public PostResponseDTO(Post post, Character myChar) {
         this(
             post.getId(),
             post.getText(),
@@ -30,7 +32,9 @@ public record PostResponseDTO(
             post.getAuthor().getId(),
             post.getAuthor().getName(),
             post.getAuthor().getPhotoUrl(),
-            post.getLikedBy().size()
+            post.getLikedBy().size(),
+            // compara pelo Id em vez de comparar o objeto inteiro
+            myChar != null && post.getLikedBy().stream().anyMatch(liker -> liker.getId().equals(myChar.getId()))
         );
     }
     

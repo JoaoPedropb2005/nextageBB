@@ -98,6 +98,19 @@ public class Post {
     public Set<Character> getLikedBy() {
         return likedBy;
     }
+    
+    public void addLike(Character character) {
+        this.likedBy.add(character);
+    }
+
+    public void removeLike(Character character) {
+        this.likedBy.remove(character);
+    }
+    
+    // Verifica se já curtiu
+    public boolean isLikedBy(Character character) {
+        return this.likedBy.contains(character);
+    }
 
     public void setLikedBy(Set<Character> likedBy) {
         this.likedBy = likedBy;
