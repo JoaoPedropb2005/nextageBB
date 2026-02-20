@@ -16,7 +16,7 @@
 
 ## Sobre o Projeto
 
-O **NextageBB** é um sistema inovador de gerenciamento e interação para personagens de jogos MMO/RPG. Diferente de redes sociais tradicionais onde os usuários interagem entre si, no NextageBB o **Gamer** atua apenas como um "gerente" de sua conta. Toda a interação social (Postagens, Comentários, Curtidas e Seguidores) acontece **exclusivamente através dos personagens criados**, garantindo uma imersão completa.
+O **NextageBB** é um sistema inovador de gerenciamento e interação para personagens de jogos no geral. Diferente de redes sociais tradicionais onde os usuários interagem entre si, no NextageBB o **Gamer** atua apenas como um "gerente" de sua conta. Toda a interação social (Postagens, Comentários, Curtidas e Seguidores) acontece **exclusivamente através dos personagens criados**, garantindo uma imersão completa.
 
 O grande diferencial arquitetural do projeto é o isolamento de instâncias: personagens só podem interagir, buscar e ver postagens de outros personagens que pertençam ao **mesmo universo de jogo** (Same Game Universe).
 
