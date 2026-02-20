@@ -33,7 +33,6 @@ export default function SearchCharacters() {
             <h2 style={{ color: '#e6edf3', fontSize: '28px', marginBottom: '20px' }}>Find Players</h2>
             <p style={{ color: '#8b949e', marginBottom: '30px' }}>Search for other characters exploring the same game universe as you.</p>
 
-            {/* BARRA DE PESQUISA */}
             <form onSubmit={handleSearch} style={{ display: 'flex', gap: '15px', marginBottom: '40px' }}>
                 <input 
                     type="text" 
@@ -51,7 +50,6 @@ export default function SearchCharacters() {
                 </button>
             </form>
 
-            {/* RESULTADOS DA PESQUISA */}
             {hasSearched && results.length === 0 && (
                 <p style={{ textAlign: 'center', color: '#8b949e', padding: '40px 0', backgroundColor: '#161b22', borderRadius: '10px', border: '1px solid #30363d' }}>
                     No characters found in your game with that name.

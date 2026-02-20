@@ -29,7 +29,7 @@ public class Photo {
     private String type;
     
     @Lob
-    @Column(columnDefinition = "LONGLOB")
+    // @Column(columnDefinition = "LONGLOB")
     private byte[] data;
     
     public Photo(){

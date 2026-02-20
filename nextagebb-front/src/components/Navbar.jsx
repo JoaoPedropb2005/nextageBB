@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import api from '../services/api';
 
-export default function Navbar({ showCharacter = true, showFindPlayers = true }) {
+export default function Navbar({ showCharacter = true, showFindPlayers = true, hideSearch = false, customButton }) {
     const navigate = useNavigate();
     const [character, setCharacter] = useState(null);
     const activeCharacterId = localStorage.getItem('activeCharacterId');
@@ -32,7 +32,8 @@ export default function Navbar({ showCharacter = true, showFindPlayers = true })
                 <Link to="/Feed" style={{ color: '#2f81f7', textDecoration: 'none', fontSize: '22px', fontWeight: '900', letterSpacing: '-0.5px' }}>
                     NextageBB
                 </Link>
-                {showFindPlayers && (
+                {/* Se hideSearch for true, o link Find Players é escondido */}
+                {showFindPlayers && !hideSearch && (
                     <Link to="/search" style={{ color: '#c9d1d9', textDecoration: 'none', fontSize: '15px', fontWeight: 'bold' }}>
                         Find Players
                     </Link>
@@ -48,9 +49,14 @@ export default function Navbar({ showCharacter = true, showFindPlayers = true })
                         </div>
                     )}
                     <div style={{ display: 'flex', gap: '10px' }}>
-                        <button onClick={() => { localStorage.removeItem('activeCharacterId'); navigate('/SelectCharacter'); }} style={{ background: 'transparent', border: '1px solid #30363d', color: '#c9d1d9', padding: '6px 12px', borderRadius: '6px', cursor: 'pointer', fontSize: '13px', fontWeight: 'bold' }}>
-                            Switch Character
-                        </button>
+                        {/* Se o SelectCharacter enviar um customButton, ele aparece aqui. Se não, mostra o Switch Character normal */}
+                        {customButton ? (
+                            customButton
+                        ) : (
+                            <button onClick={() => { localStorage.removeItem('activeCharacterId'); navigate('/SelectCharacter'); }} style={{ background: 'transparent', border: '1px solid #30363d', color: '#c9d1d9', padding: '6px 12px', borderRadius: '6px', cursor: 'pointer', fontSize: '13px', fontWeight: 'bold' }}>
+                                Switch Character
+                            </button>
+                        )}
                         <button onClick={handleLogout} style={{ background: '#238636', border: '1px solid rgba(240,246,252,0.1)', color: 'white', padding: '6px 12px', borderRadius: '6px', cursor: 'pointer', fontSize: '13px', fontWeight: 'bold' }}>
                             Logout
                         </button>
