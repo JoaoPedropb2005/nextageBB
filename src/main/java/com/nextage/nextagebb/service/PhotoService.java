@@ -50,6 +50,6 @@ public class PhotoService {
     }
     
     public String generateUrl(Long photoId){
-        return ServletUriComponentsBuilder.fromCurrentContextPath().path("/photos").path(photoId.toString()).toUriString();
+        return ServletUriComponentsBuilder.fromCurrentContextPath().path("/photos/").path(photoId.toString()).toUriString();
     }
 }

@@ -38,4 +38,6 @@ public interface PostRepository extends JpaRepository<Post, Long> {
            "(SELECT f FROM Character c JOIN c.following f WHERE c.id = :myCharacterId) " +
            "ORDER BY p.createdAt DESC")
     List<Post> findTimeline(@Param("myCharacterId") Long myCharacterId);
+    
+    List<Post> findAllByOrderByCreatedAtDesc();
 }

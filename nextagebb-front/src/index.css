@@ -1,0 +1,26 @@
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  background-color: #0d1117; /* Fundo escuro estilo Backloggd/GitHub Dark */
+  color: #c9d1d9; /* Texto cinza claro para não cansar a vista */
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+}
+
+/* Estiliza todos os inputs e textareas do site de uma vez */
+input, select, textarea {
+  background-color: #010409;
+  color: #c9d1d9;
+  border: 1px solid #30363d;
+  padding: 10px;
+  border-radius: 6px;
+  font-family: inherit;
+}
+
+input:focus, select:focus, textarea:focus {
+  outline: none;
+  border-color: #2f81f7; /* Azul vibrante ao clicar */
+}
