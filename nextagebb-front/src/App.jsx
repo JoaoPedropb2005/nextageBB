@@ -13,8 +13,8 @@ function App() {
       <Routes>
         {/* Telas que NÃO têm a Navbar */}
         <Route path="/" element={<Login />} />
-        <Route path="/SelectCharacter" element={<SelectCharacter />} />
         <Route path="/CreateCharacter" element={<CreateCharacter />} />
+        <Route path="/SelectCharacter" element={<SelectCharacter />} />
         
         {/* Telas que TÊM a Navbar (Agrupadas dentro do Layout) */}
         <Route element={<Layout />}>

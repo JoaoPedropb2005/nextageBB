@@ -1,3 +1,4 @@
+// Login.jsx
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import api from '../services/api';
@@ -13,16 +14,35 @@ export default function Login() {
     const handleSubmit = async (e) => {
         e.preventDefault();
         setError('');
+
         try {
             if (isRegistering) {
+                // Registro de usuário
                 await api.post('/auth/register', { name, email, password });
                 alert('Conta criada com sucesso! Faça login agora.');
-                setIsRegistering(false); 
+                setIsRegistering(false);
             } else {
+                // Login
                 const response = await api.post('/auth/login', { email, password });
-                localStorage.setItem('token', response.data.token);
-                localStorage.setItem('userId', response.data.userId);
-                navigate('/SelectCharacter'); 
+                const token = response.data.token;
+                const userId = response.data.userId;
+
+                // Salva token e id do usuário
+                localStorage.setItem('token', token);
+                localStorage.setItem('userId', userId);
+
+                // Verifica se usuário já tem personagens
+                const charactersRes = await api.get(`/api/characters/user/${userId}`, {
+                    headers: { Authorization: `Bearer ${token}` }
+                });
+
+                if (!charactersRes.data || charactersRes.data.length === 0) {
+                    // Nenhum personagem -> vai para criação
+                    navigate('/CreateCharacter');
+                } else {
+                    // Já tem personagens -> vai para seleção
+                    navigate('/SelectCharacter');
+                }
             }
         } catch (err) {
             setError(err.response?.data || 'Ocorreu um erro ao conectar com o servidor.');
@@ -41,9 +61,9 @@ export default function Login() {
                 boxShadow: '0 8px 24px rgba(0,0,0,0.2)'
             }}>
                 <h2 style={{ textAlign: 'center', color: '#e6edf3', marginBottom: '20px', fontSize: '24px' }}>
-                    {isRegistering ? 'Criar Conta' : 'NextAgeBB'}
+                    {isRegistering ? 'Criar Conta' : 'NextageBB'}
                 </h2>
-                
+
                 {error && <p style={{ color: '#f85149', backgroundColor: 'rgba(248, 81, 73, 0.1)', padding: '10px', borderRadius: '6px', fontSize: '14px', marginBottom: '15px', border: '1px solid rgba(248, 81, 73, 0.4)' }}>{error}</p>}
 
                 <form onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column', gap: '15px' }}>

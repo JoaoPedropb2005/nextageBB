@@ -59,7 +59,6 @@ export default function CharacterProfile() {
     return (
         <div style={{ padding: '0 20px', maxWidth: '700px', margin: '0 auto' }}>
             
-            {/* CABEÇALHO DO PERFIL */}
             <div style={{ display: 'flex', alignItems: 'center', gap: '25px', padding: '30px', backgroundColor: '#161b22', border: '1px solid #30363d', borderRadius: '12px', marginBottom: '40px', boxShadow: '0 4px 12px rgba(0,0,0,0.1)' }}>
                 <img src={character.photoUrl || `https://ui-avatars.com/api/?name=${character.name || 'Hero'}&background=2f81f7&color=fff`} alt="Avatar" style={{ width: '120px', height: '120px', borderRadius: '50%', objectFit: 'cover', border: '4px solid #30363d' }} />
                 
@@ -78,7 +77,6 @@ export default function CharacterProfile() {
                 )}
             </div>
 
-            {/* LISTA DE POSTAGENS EXCLUSIVA */}
             <h3 style={{ borderBottom: '1px solid #30363d', paddingBottom: '15px', marginBottom: '25px', color: '#e6edf3', fontSize: '20px' }}>
                 Activity
             </h3>
